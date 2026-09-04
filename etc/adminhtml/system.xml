@@ -1,0 +1,124 @@
+<?xml version="1.0"?>
+<!--
+    Stores, Configuration, Sales, Njiwa WhatsApp.
+
+    Every field carries a comment. A setting whose meaning has to be looked up
+    somewhere else is a setting people get wrong.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <section id="njiwa" translate="label" type="text" sortOrder="400" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Njiwa WhatsApp</label>
+            <tab>sales</tab>
+            <resource>Upeo_Njiwa::config</resource>
+
+            <group id="connection" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Connection</label>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send WhatsApp messages</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>The master switch. Set it to No and this module stops sending anything at all, without losing your key, your numbers or your wording. Orders carry on exactly as before.</comment>
+                </field>
+                <field id="api_key" translate="label comment" type="obscure" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>API key</label>
+                    <backend_model>Magento\Config\Model\Config\Backend\Encrypted</backend_model>
+                    <comment><![CDATA[Create one in the Njiwa console under API keys. A key beginning <code>sk_test_</code> checks and stores every message and delivers nothing, which is what you want while you set this up. A key beginning <code>sk_live_</code> sends to real phones. The console shows a key once and keeps only its fingerprint, so a lost key is replaced rather than recovered. Magento stores it encrypted.]]></comment>
+                </field>
+                <field id="base_url" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Njiwa address</label>
+                    <comment>Leave this exactly as it is. It exists for shops that have been given their own Njiwa address, and changing it otherwise stops messages reaching anybody.</comment>
+                </field>
+                <field id="from" translate="label comment" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send from</label>
+                    <comment>Which of your linked WhatsApp numbers these messages come from. Digits only, in full international form, such as 254712345678. Leave it empty to use the number marked default in the console, which is the right answer if you have one number.</comment>
+                </field>
+                <field id="test_connection" translate="label comment" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Check it works</label>
+                    <frontend_model>Upeo\Njiwa\Block\Adminhtml\System\Config\TestConnection</frontend_model>
+                    <comment>Asks Njiwa which numbers this key can send from, and says so plainly if it is a test key. It sends nothing. Both buttons use the settings as they are saved, not as they are on screen, so save first and then check.</comment>
+                </field>
+                <field id="test_message" translate="label comment" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Send a test message</label>
+                    <frontend_model>Upeo\Njiwa\Block\Adminhtml\System\Config\TestMessage</frontend_model>
+                    <comment>Sends one fixed message to the number you type here. Put in your own number: on a live key this is a real message to a real phone. The wording is fixed, so nothing you type here reaches anybody but you.</comment>
+                </field>
+            </group>
+
+            <group id="customer" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Messages to your customers</label>
+                <comment><![CDATA[Each message is plain text. Anything in braces is filled in from the order: <code>{first_name}</code>, <code>{last_name}</code>, <code>{customer_name}</code>, <code>{order_number}</code>, <code>{order_total}</code>, <code>{order_date}</code>, <code>{order_status}</code>, <code>{payment_method}</code>, <code>{items}</code>, <code>{item_count}</code>, <code>{shop_name}</code>. A placeholder that does not exist is removed before sending rather than posted to a customer.]]></comment>
+
+                <field id="placed_enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order placed</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Sent the moment the order is placed, before any payment has been confirmed. Useful for bank transfer and cash on delivery.</comment>
+                </field>
+                <field id="placed_template" translate="label" type="textarea" sortOrder="15" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wording</label>
+                    <depends><field id="placed_enabled">1</field></depends>
+                    <comment>Leave this empty and nothing is sent, whatever the switch above says.</comment>
+                </field>
+
+                <field id="paid_enabled" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Payment received</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Sent when an invoice is paid. The one most shops want.</comment>
+                </field>
+                <field id="paid_template" translate="label" type="textarea" sortOrder="25" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wording</label>
+                    <depends><field id="paid_enabled">1</field></depends>
+                </field>
+
+                <field id="shipped_enabled" translate="label comment" type="select" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order shipped</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Sent when a shipment is created, which is the moment the customer most wants to hear from you.</comment>
+                </field>
+                <field id="shipped_template" translate="label" type="textarea" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wording</label>
+                    <depends><field id="shipped_enabled">1</field></depends>
+                </field>
+
+                <field id="cancelled_enabled" translate="label comment" type="select" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order cancelled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Worth sending. A cancellation nobody explained is what turns into a phone call.</comment>
+                </field>
+                <field id="cancelled_template" translate="label" type="textarea" sortOrder="45" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wording</label>
+                    <depends><field id="cancelled_enabled">1</field></depends>
+                </field>
+
+                <field id="refunded_enabled" translate="label comment" type="select" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Order refunded</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Sent when a credit memo is created. Saying the money is on its way stops the "where is my refund" message before it is sent.</comment>
+                </field>
+                <field id="refunded_template" translate="label" type="textarea" sortOrder="55" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wording</label>
+                    <depends><field id="refunded_enabled">1</field></depends>
+                </field>
+            </group>
+
+            <group id="alert" translate="label comment" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>The message to you</label>
+                <comment>One message when an order is placed, to your own number.</comment>
+                <field id="enabled" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Tell me about new orders</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Send me a WhatsApp message when an order comes in.</comment>
+                </field>
+                <field id="numbers" translate="label comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Your WhatsApp numbers</label>
+                    <comment>Where that message goes. Digits only, in full international form, separated by commas if there are several. Everybody listed gets their own copy.</comment>
+                </field>
+                <field id="template" translate="label" type="textarea" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Wording</label>
+                    <depends><field id="enabled">1</field></depends>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+    Everything this module writes goes to var/log/njiwa.log rather than into
+    system.log with the rest of Magento. When a merchant asks why a customer
+    was not messaged, one file is the answer, and it can be sent to us without
+    sending the log of the whole shop.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <virtualType name="upeoNjiwaLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="name" xsi:type="string">njiwa</argument>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Upeo\Njiwa\Logger\Handler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <type name="Upeo\Njiwa\Model\Notifier">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Model\Consumer">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Model\Templates">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Model\ResourceModel\SendLog">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Observer\OrderPlaced">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Observer\PaymentReceived">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Observer\OrderShipped">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Observer\OrderCancelled">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+    <type name="Upeo\Njiwa\Observer\OrderRefunded">
+        <arguments>
+            <argument name="logger" xsi:type="object">upeoNjiwaLogger</argument>
+        </arguments>
+    </type>
+</config>

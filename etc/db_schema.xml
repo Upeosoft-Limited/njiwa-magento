@@ -1,0 +1,56 @@
+<?xml version="1.0"?>
+<!--
+    One row per message this module has decided to send.
+
+    This is the marker that outlives everything else. The Idempotency-Key sent
+    with each message stops Njiwa delivering the same thing twice inside
+    twenty-four hours; this table is what stops the module asking a second
+    time a week later, when a shipment is saved again to add a tracking
+    number, or when a shop replays an order.
+
+    The unique key is the whole point of the table: the row is written before
+    the message is sent, and a second attempt at the same order, event and
+    number collides with it and stops there.
+
+    It is keyed on the increment id rather than the order's row id because
+    sales_order_place_after fires before the order row exists, so at the
+    moment an order is placed the increment id is the only name it has.
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="upeo_njiwa_message" resource="default" engine="innodb"
+           comment="WhatsApp messages Njiwa has been asked to send">
+        <column xsi:type="int" name="message_id" unsigned="true" nullable="false" identity="true"
+                comment="Row id"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="true"
+                comment="sales_order.entity_id, once the order has one"/>
+        <column xsi:type="varchar" name="increment_id" nullable="false" length="50"
+                comment="The order number the customer sees"/>
+        <column xsi:type="smallint" name="store_id" unsigned="true" nullable="false" default="0"
+                comment="The store the order was placed in"/>
+        <column xsi:type="varchar" name="event" nullable="false" length="32"
+                comment="placed, paid, shipped, cancelled, refunded or alert"/>
+        <column xsi:type="varchar" name="recipient" nullable="false" length="32"
+                comment="WhatsApp number, digits only"/>
+        <column xsi:type="varchar" name="status" nullable="false" length="16" default="queued"
+                comment="queued, sent or failed"/>
+        <column xsi:type="varchar" name="njiwa_id" nullable="true" length="64"
+                comment="Njiwa's own id for the message, for support to look up"/>
+        <column xsi:type="varchar" name="detail" nullable="true" length="255"
+                comment="Why it failed, on the ones that did"/>
+        <column xsi:type="timestamp" name="created_at" on_update="false" nullable="false" default="CURRENT_TIMESTAMP"
+                comment="When this module claimed the send"/>
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="message_id"/>
+        </constraint>
+        <constraint xsi:type="unique" referenceId="UPEO_NJIWA_MESSAGE_STORE_ID_INCREMENT_ID_EVENT_RECIPIENT">
+            <column name="store_id"/>
+            <column name="increment_id"/>
+            <column name="event"/>
+            <column name="recipient"/>
+        </constraint>
+        <index referenceId="UPEO_NJIWA_MESSAGE_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+    </table>
+</schema>

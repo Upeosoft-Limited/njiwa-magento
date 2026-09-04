@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<!--
+    Who is allowed to open the settings page.
+
+    etc/adminhtml/system.xml already names Upeo_Njiwa::config as the resource
+    that guards the section. Magento denies a resource it has never been told
+    about, so without this file the section is invisible to every admin user
+    including the owner, and the two buttons answer 403. It is also what an
+    administrator ticks to let a colleague edit these settings without giving
+    them the rest of Stores, Configuration.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Acl/etc/acl.xsd">
+    <acl>
+        <resources>
+            <resource id="Magento_Backend::admin">
+                <resource id="Magento_Backend::stores">
+                    <resource id="Magento_Backend::stores_settings">
+                        <resource id="Magento_Config::config">
+                            <resource id="Upeo_Njiwa::config" title="Njiwa WhatsApp Section" sortOrder="400"/>
+                        </resource>
+                    </resource>
+                </resource>
+            </resource>
+        </resources>
+    </acl>
+</config>

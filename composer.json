@@ -1,0 +1,11 @@
+{
+  "name": "upeo/module-njiwa",
+  "description": "WhatsApp your customers when their order is paid, shipped or cancelled, through Njiwa.",
+  "type": "magento2-module",
+  "license": "MIT",
+  "require": { "php": ">=7.4", "ext-json": "*" },
+  "autoload": {
+    "files": ["registration.php"],
+    "psr-4": { "Upeo\\Njiwa\\": "" }
+  }
+}

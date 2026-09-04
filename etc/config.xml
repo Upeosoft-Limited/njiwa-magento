@@ -1,0 +1,60 @@
+<?xml version="1.0"?>
+<!--
+    What the module does before anybody opens the settings page.
+
+    Every message is off until it is switched on, but each one already has
+    wording that works unedited, so turning an event on is one click rather
+    than one click and a writing exercise.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <njiwa>
+            <connection>
+                <!--
+                    The master switch arrives on, as it does in the WooCommerce
+                    plugin, because it is not the thing that keeps a fresh
+                    install quiet. Two other things do, and both take a
+                    deliberate act to undo: there is no API key until somebody
+                    pastes one, and every event below is off. A switch that
+                    arrived off would only mean that a merchant who pasted a
+                    key and turned an event on still got nothing, and found out
+                    from a line in a log.
+                -->
+                <enabled>1</enabled>
+                <base_url>https://njiwa.upeo.ai</base_url>
+            </connection>
+            <customer>
+                <placed_enabled>0</placed_enabled>
+                <placed_template>Hi {first_name}, we have your order {order_number} for {order_total}. We will let you know the moment your payment comes through.
+
+{shop_name}</placed_template>
+                <paid_enabled>0</paid_enabled>
+                <paid_template>Hi {first_name}, thank you. Your payment for order {order_number} came through and we are getting it ready.
+
+{items}
+
+Total {order_total}
+{shop_name}</paid_template>
+                <shipped_enabled>0</shipped_enabled>
+                <shipped_template>Hi {first_name}, order {order_number} is on its way to you. Thank you for shopping with {shop_name}.</shipped_template>
+                <cancelled_enabled>0</cancelled_enabled>
+                <cancelled_template>Hi {first_name}, order {order_number} has been cancelled and you have not been charged. If that was not you, reply to this message and we will look into it.
+
+{shop_name}</cancelled_template>
+                <refunded_enabled>0</refunded_enabled>
+                <refunded_template>Hi {first_name}, we have refunded {order_total} for order {order_number}. Banks take a few days to show it.
+
+{shop_name}</refunded_template>
+            </customer>
+            <alert>
+                <enabled>0</enabled>
+                <template>New order {order_number} on {shop_name}.
+
+{customer_name}
+{item_count} item(s), {order_total}
+Paid by {payment_method}</template>
+            </alert>
+        </njiwa>
+    </default>
+</config>

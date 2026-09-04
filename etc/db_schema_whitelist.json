@@ -1,0 +1,23 @@
+{
+    "upeo_njiwa_message": {
+        "column": {
+            "message_id": true,
+            "order_id": true,
+            "increment_id": true,
+            "store_id": true,
+            "event": true,
+            "recipient": true,
+            "status": true,
+            "njiwa_id": true,
+            "detail": true,
+            "created_at": true
+        },
+        "index": {
+            "UPEO_NJIWA_MESSAGE_ORDER_ID": true
+        },
+        "constraint": {
+            "PRIMARY": true,
+            "UPEO_NJIWA_MESSAGE_STORE_ID_INCREMENT_ID_EVENT_RECIPIENT": true
+        }
+    }
+}

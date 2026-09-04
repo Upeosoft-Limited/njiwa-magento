@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<!--
+    Which queue a published message lands in.
+
+    This binding is not decoration. With the database queue, publishing looks
+    up the queues bound to the topic and writes the message to each of them; a
+    topic with no binding is accepted and then quietly goes nowhere.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/topology.xsd">
+    <exchange name="magento" type="topic">
+        <binding id="upeoNjiwaSend" topic="upeo.njiwa.send" destination="upeo.njiwa.send" destinationType="queue"/>
+    </exchange>
+</config>

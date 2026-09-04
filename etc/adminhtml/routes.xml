@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<!--
+    The route behind the two buttons on the settings page. Admin only: a
+    front name declared under the admin router is reachable only through the
+    admin URL, and only after Magento has checked the session and the ACL
+    resource named on each controller.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:App/etc/routes.xsd">
+    <router id="admin">
+        <route id="njiwa" frontName="njiwa">
+            <module name="Upeo_Njiwa"/>
+        </route>
+    </router>
+</config>

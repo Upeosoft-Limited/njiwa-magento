@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!--
+    No connection is named on purpose. Magento uses the installation's own
+    default, which is the database on a plain install and RabbitMQ on a shop
+    that has one, so this module follows the shop rather than insisting.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/publisher.xsd">
+    <publisher topic="upeo.njiwa.send"/>
+</config>

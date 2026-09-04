@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!--
+    The worker that does the sending.
+
+    Magento's cron starts it every minute and it stops again after the number
+    of messages below, which is how the rest of Magento runs its consumers and
+    means a shop with working cron needs to set nothing up. A shop that runs
+    its consumers as long lived processes gets the same behaviour for free.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework-message-queue:etc/consumer.xsd">
+    <consumer name="upeo.njiwa.send" queue="upeo.njiwa.send" handler="Upeo\Njiwa\Model\Consumer::process" maxMessages="500"/>
+</config>

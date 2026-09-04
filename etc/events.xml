@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!--
+    One observer per thing that actually happens to an order.
+
+    These are the events Magento fires once, at the moment the thing is true,
+    rather than sales_order_save_after, which fires whenever anything at all
+    touches an order and would message a customer for a change of address.
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_place_after">
+        <observer name="njiwa_order_placed" instance="Upeo\Njiwa\Observer\OrderPlaced"/>
+    </event>
+    <event name="sales_order_invoice_pay">
+        <observer name="njiwa_payment_received" instance="Upeo\Njiwa\Observer\PaymentReceived"/>
+    </event>
+    <event name="sales_order_shipment_save_after">
+        <observer name="njiwa_order_shipped" instance="Upeo\Njiwa\Observer\OrderShipped"/>
+    </event>
+    <event name="order_cancel_after">
+        <observer name="njiwa_order_cancelled" instance="Upeo\Njiwa\Observer\OrderCancelled"/>
+    </event>
+    <event name="sales_order_creditmemo_save_after">
+        <observer name="njiwa_order_refunded" instance="Upeo\Njiwa\Observer\OrderRefunded"/>
+    </event>
+</config>
