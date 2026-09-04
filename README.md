@@ -16,11 +16,13 @@ composer config repositories.njiwa vcs https://github.com/Upeosoft-Limited/njiwa
 composer require upeo/module-njiwa
 ```
 
-The repository is private, so the machine running Composer needs a GitHub token
-that can read it, in `~/.composer/auth.json` or `COMPOSER_AUTH`. Composer reads
-versions from git tags, so `require` finds nothing until a release is tagged;
-until then ask for the branch by name, `composer require upeo/module-njiwa
-dev-main`.
+The repository is public, so Composer needs no token and no `auth.json`. It does
+read versions from git tags, so `require` finds nothing until a release is
+tagged; until then ask for the branch by name:
+
+```
+composer require upeo/module-njiwa dev-main
+```
 
 Or copy this folder to `app/code/Upeo/Njiwa` in your Magento installation.
 
