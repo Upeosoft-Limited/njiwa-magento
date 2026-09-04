@@ -31,9 +31,16 @@ Either way, then:
 ```
 bin/magento module:enable Upeo_Njiwa
 bin/magento setup:upgrade
-bin/magento setup:di:compile      # production mode only
+bin/magento setup:di:compile                        # production mode only
+bin/magento setup:static-content:deploy -f adminhtml  # production mode only
 bin/magento cache:flush
 ```
+
+The `static-content:deploy` line matters on a production mode shop and is easy
+to leave out. This module's two buttons live in `view/adminhtml/web/js/check.js`,
+and in production mode Magento serves admin JavaScript only from what that
+command has deployed. Skip it and the settings page looks right, both buttons do
+nothing at all, and nothing anywhere says why.
 
 `setup:upgrade` creates the one table this module has, `upeo_njiwa_message`.
 That table is what stops a customer being messaged twice, so the module is not
@@ -93,9 +100,10 @@ and save. Magento stores it encrypted, with the rest of your credentials.
 
 **Start with a test key.** A key beginning `sk_test_` checks and stores every
 message and delivers nothing. Turn on the events you want, place a test order,
-then read the order's **Comments History** and `var/log/njiwa.log`. Both say
-what was sent, to whom, and Njiwa's own id for it, and a test send is labelled
-"Test key, so nothing reached WhatsApp." Only when that reads right, swap in
+then read the order's **Comments History** and `var/log/njiwa.log`. The order
+comment is the fuller of the two: it names the number, carries Njiwa's own id
+for the message, and on a test key adds "Test key, so nothing reached WhatsApp."
+The log line records the order, the event and the number it went to. Only when that reads right, swap in
 the `sk_live_` key. A live key sends real messages, and real messages cost
 money.
 
@@ -214,9 +222,16 @@ The message also carries an idempotency key, which Njiwa honours for
 twenty-four hours, so even a job that runs twice inside a minute replays the
 first answer instead of messaging the customer again.
 
-**A refusal is not retried.** If Njiwa says no — no credit, a number that is
-not linked, a recipient WhatsApp does not know — the reason is written on the
-order and in the log, and that is the end of it. It would say no again.
+**Nothing is retried.** If Njiwa says no — no credit, a number that is not
+linked, a recipient WhatsApp does not know — the reason is written on the
+order and in the log, and that is the end of it, which is right: it would say
+no again.
+
+A moment when Njiwa could not be reached at all is treated the same way, and
+that is worth knowing before you rely on it. The message was never accepted, so
+sending it again would be safe, but the consumer files the failure against the
+claim row and nothing picks it up afterwards. A brief network blip therefore
+costs that customer their message, and the order comment is where it says so.
 
 **Numbers are taken as typed, punctuation removed.** The billing telephone
 first, the shipping one if there is no billing number. `0712 345 678` becomes
@@ -233,10 +248,20 @@ complained about.
 without sending the log of your whole shop.
 
 **Removing it.** `bin/magento module:disable Upeo_Njiwa` stops it and keeps
-everything. If you delete the files instead, your key stays encrypted in
-`core_config_data` and the `upeo_njiwa_message` table stays where it is; this
-module ships no uninstall script, so `bin/magento module:uninstall Upeo_Njiwa`
-is what removes them, and it only works for a module installed by Composer.
+everything, which is what you want almost every time.
+
+Nothing removes your data on its own. This module ships no uninstall script, so
+`bin/magento module:uninstall Upeo_Njiwa` takes the code away and leaves your
+key encrypted in `core_config_data` and the `upeo_njiwa_message` table where it
+is. That is deliberate rather than an oversight: the table is the record of
+which customers have already been messaged, and dropping it on an uninstall is
+how a reinstall messages all of them a second time. To remove them anyway, do it
+by hand once you are sure:
+
+```sql
+DELETE FROM core_config_data WHERE path LIKE 'njiwa/%';
+DROP TABLE upeo_njiwa_message;
+```
 Order comments stay either way, because they are a record of what was sent and
 they belong to the order.
 
